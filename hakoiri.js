@@ -15,7 +15,7 @@
 
 
 var rules = [
-    //global flag is set because there could be multiple mathes for smaller blocks (atomic blocks for example)
+    //global flag is set because there could be multiple matches for smaller blocks (atomic blocks for example)
     
     //daughter moves
     //daughter left shift
@@ -101,7 +101,45 @@ var rules = [
     //atomic down shift
     [/7(....)0(....)0/g,"0${0}0${1}7"],
     //atomic up shift
-    [/0(....)0(....)7/g,"7${0}0${1}0"]
+    [/0(....)0(....)7/g,"7${0}0${1}0"],
+    
+    
+    //double diagonal moves
+    //horizontal variants
+    //atomic tl
+    //0..._
+    //07
+    [/0(....)07/g,"7${0}00"],
+    //atomic tr
+    //.0.._
+    //70
+    [/0(...)70/g,"7${0}00"],
+    //atomic bl
+    //07.._
+    //0
+    [/07(...)0/g,"00${0}7"],
+    //atomic br
+    //70.._
+    //.0
+    [/70(....)0/g,"00${0}7"],
+    
+    //vertical variants
+    //atomic tl
+    //00.._
+    //.7
+    [/00(....)7/g,"70${0}0"],
+    //atomic tr
+    //00.._
+    //7
+    [/00(...)7/g,"07${0}0"],
+    //atomic bl
+    //.7.._
+    //00
+    [/7(...)00/g,"0${0}70"],
+    //atomic br
+    //7..._
+    //00
+    [/7(....)00/g,"0${0}07"]
 ];
 
 
@@ -160,7 +198,7 @@ var solve = function(state){
                     //don't forget the first state:) Wish there were do..while() loops in JavaScript
                     solution.push(state);
                     console.log("iterations taken: "+itr);
-                    console.log("number of steps: "+solution.length);
+                    console.log("number of steps: "+(solution.length-1));//-1 because it also includes the first state
                     return solution.reverse()/*.map(a=>a.replace("_","\n"))*/;//very functional indeed
                 }
                 var currentMatch = matches.next();
@@ -170,7 +208,7 @@ var solve = function(state){
     }
     console.log("found no solution;へ;");
     return [];
-}
+};
 
 
 var state = 
