@@ -170,10 +170,7 @@ var solve = function(state){
                 var v = currentMatch.value;
                 //constructing the replacement string
                 var replacementString = rule[1];
-                //console.log("matched:    "+v[0]);
-                //console.log("replstring: "+replacementString);
                 for(var j = 1; j < v.length; j++){
-                    //console.log(replacementString);
                     replacementString = replacementString.replace("${"+(j-1)+"}",v[j]);
                     //console.log(replacementString);
                     //because javascript string is immutable
@@ -213,48 +210,6 @@ var solve = function(state){
 
 
 
-var diffStr = function(a,b){
-    var diff = [];
-    for(var i = 0; i < a.length; i++){
-        if(a[i] === b[i]){
-            diff[i] = "0";
-        }else{
-            diff[i] = "1";
-        }
-    }
-    return diff.join("");
-};
-
-
-var simplifyMoves = function(moves){
-    var newMoves = [moves[0]];
-    var diff = diffStr(moves[0],moves[0]);
-    for(var i = 0; i < moves.length-1; i++){
-        //if you find an overlap in the diff, the move can be simplified
-        var move = moves[i];
-        var move1 = moves[i+1];
-        var diff1 = diffStr(move,move1);
-        var diff0 = diff;
-        diff = diff1;
-        console.log(diff);
-        //now we can deal with diff and diff0
-        var flag = false;
-        for(var j = 0; j < diff.length; j++){
-            if(diff[j] === "1" && diff0[j] === "1"){
-                //found double diff! continuing without pushing to newMoves
-                flag = true;
-                break;
-            }
-        }
-        if(!flag){
-            newMoves.push(move1);
-        }
-    }
-    return newMoves;
-};
-
-
-
 
 
 var state = 
@@ -270,8 +225,6 @@ var state =
 7560";*/
 
 var result = solve(state);
-//var result1 = simplifyMoves(result);
-//console.log(result1.length-1);
 console.log(
     (result.map(a=>a.split("_").map(b=>b.split("").join("")).join("\n")).join("\n   V\n"))
     .split("").map(
@@ -296,14 +249,5 @@ console.log(
             }
         }
     ).join("")+"\u001b[0m"
-    /*replace(/2/g,"\u001b[41m2").
-    replace(/3/g,"\u001b[42m2").
-    replace(/4/g,"\u001b[42m2").
-    replace(/5/g,"\u001b[44m2").
-    replace(/6/g,"\u001b[44m2").
-    replace(/7/g,"\u001b[43m7").
-    replace(/0/g,"\u001b[0m0").
-    replace(/_/g,"\u001b[0m_").
-    replace(/\n/g,"\u001b[0m\n")*/
 );
 
