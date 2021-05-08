@@ -55,92 +55,7 @@ var rules = [
     //atomic down shift
     [/7(....)0/g,"0${0}7"],
     //atomic up shift
-    [/0(....)7/g,"7${0}0"],
-    
-    
-    //everything below are for 2-moves-in-one moves
-    //we might not need all this below
-    //clever post processing might do
-    
-    
-    //double moves
-    //daughter moves
-    //daughter left shift
-    [/0022(.)0022/g,"2200${0}2200"],
-    //daughter right shift
-    [/2200(.)2200/g,"0022${0}0022"],
-    //daughter down shift
-    [/22(...)22(...)00(...)00/g,"00${0}00${1}22${2}22"],
-    //daughter up shift
-    [/00(...)00(...)22(...)22/g,"22${0}22${1}00${2}00"],
-    
-    //2 high moves
-    //2 high left shift
-    [/003(..)004/g,"300${0}400"],
-    //2 high right shift
-    [/300(..)400/g,"003${0}004"],
-    //2 high down shift
-    [/3(....)4(....)0(....)0/g,"0${0}0${1}3${2}4"],
-    //2 high up shift
-    [/0(....)0(....)3(....)4/g,"3${0}4${1}0${2}0"],
-    
-    //2 wide moves
-    //2 wide left shift
-    [/0056/g,"5600"],
-    //2 wide right shift
-    [/5600/g,"0056"],
-    //2 high down shift
-    [/56(...)00(...)00/g,"00${0}00${1}56"],
-    //2 high up shift
-    [/00(...)00(...)56/g,"56${0}00${1}00"],
-    
-    //atomic moves
-    //atomic left shift
-    [/007/g,"700"],
-    //atomic right shift
-    [/700/g,"007"],
-    //atomic down shift
-    [/7(....)0(....)0/g,"0${0}0${1}7"],
-    //atomic up shift
-    [/0(....)0(....)7/g,"7${0}0${1}0"],
-    
-    
-    //double diagonal moves
-    //horizontal variants
-    //atomic tl
-    //0..._
-    //07
-    [/0(....)07/g,"7${0}00"],
-    //atomic tr
-    //.0.._
-    //70
-    [/0(...)70/g,"7${0}00"],
-    //atomic bl
-    //07.._
-    //0
-    [/07(...)0/g,"00${0}7"],
-    //atomic br
-    //70.._
-    //.0
-    [/70(....)0/g,"00${0}7"],
-    
-    //vertical variants
-    //atomic tl
-    //00.._
-    //.7
-    [/00(....)7/g,"70${0}0"],
-    //atomic tr
-    //00.._
-    //7
-    [/00(...)7/g,"07${0}0"],
-    //atomic bl
-    //.7.._
-    //00
-    [/7(...)00/g,"0${0}70"],
-    //atomic br
-    //7..._
-    //00
-    [/7(....)00/g,"0${0}07"]
+    [/0(....)7/g,"7${0}0"]
 ];
 
 
@@ -213,6 +128,11 @@ var solve = function(state){
 
 
 
+
+
+
+
+
 var diffStr = function(a,b){
     var diff = [];
     for(var i = 0; i < a.length; i++){
@@ -253,6 +173,125 @@ var simplifyMoves = function(moves){
     return newMoves;
 };
 
+var cleanInput = function(input){
+    return input.split("\n").map(a=>a.replace(/\#.*$/,"").trim());
+};
+
+var absorbWhiteLines = function(input,i){
+    //consume all the white lines
+    for(i; i < input.length; i++){
+        if(input[i] !== ""){
+            break;
+        }
+    }
+    return i;
+};
+
+var parseInput = function(input){
+    //getting rid of comments
+    //and cleaning the input
+    input = cleanInput(input);
+    var state = "";
+    var stateWidth = 0;
+    var types = [];
+    var wincond = "";
+    var i = 0;
+    
+    //consume all the white lines
+    i = absorbWhiteLines(input,i);
+    for(i; i < input.length; i++){
+        if(input[i] === ""){
+            //if line break go to the next section
+            break;
+        }
+        //adding onto the state
+        stateWidth = input[i].length;
+        state += input[i]+"_"
+    }
+    state = state.slice(0,-1);
+    
+    
+    
+    //the type section
+    //consume all the white lines
+    i = absorbWhiteLines(input,i);
+    //set the default values
+    if(i === input.length){
+        //add on the default value
+        input = cleanInput(`
+            娘娘_娘娘
+            家_族
+            番頭
+            子`);
+        i = 0;
+    }
+    for(i; i < input.length; i++){
+        if(input[i] === ""){
+            //if line break go to the next section
+            break;
+        }
+        types.push(input[i]);
+    }
+    
+    
+    //the winning condition (terminator) section
+    //consume all the white lines
+    i = absorbWhiteLines(input,i);
+    //set the default values
+    if(i === input.length){
+        //add on the default value
+        //might generalize this part as well in production
+        input = cleanInput("娘娘._.娘娘.");
+        i = 0;
+    }
+    for(i; i < input.length; i++){
+        if(input[i] === ""){
+            //if line break go to the next section
+            break;
+        }
+        terminator = input[i];//the winning condigion
+    }
+    
+    
+    return [state,stateWidth,types,terminator];
+};
+
+var assignLetters = function(state,stateWidth,types,terminator){
+    //creating the letter set that's going to be used
+    var letterSet = [];
+    for(var i = 0; i < 26; i++){
+        letterSet.push(String.fromCharCode(65+i));
+        letterSet.push(String.fromCharCode(97+i));
+    }
+    for(var i = 0; i < types.length; i++){
+        var type = types[i];
+        var regstring = "";
+        //gonna generate up down left right regex string
+        for(var j = 0; j < type.length; j++){
+            if(type[j] === "_"){
+                
+            }else if(type[j] === "."){
+                
+            }
+        }
+    }
+}
+
+
+var solveHakoiri = function(input){
+    var [state,stateWidth,types,wincond] = parseInput(input);
+    console.log([state,stateWidth,types,wincond]);
+    /*
+    //assigning unicode letters to each types
+    //and creating the rule table
+    var rules = [];
+    for(var i = 0; i < types.length; i++){
+        var type = types[i];
+        type
+    }
+    */
+};
+
 
 
 
@@ -269,9 +308,33 @@ var state =
 7220_\
 7560";*/
 
+//because we are doing a text based approach, we do it in style!
+solveHakoiri(`
+    # 元のステート図
+    家娘娘家
+    族娘娘族
+    家番頭家
+    族子子族
+    子・・子
+    
+    # 空行の後はカスタムブロックの定義ができる（オプショナル）
+    娘娘_娘娘
+    家_族
+    番頭
+    子
+    
+    # 最後に勝利コンディション！
+    娘娘._.娘娘.
+`);
+
+
+
+
+
+/*
 var result = solve(state);
-//var result1 = simplifyMoves(result);
-//console.log(result1.length-1);
+var result1 = simplifyMoves(result);
+console.log(result1.length-1);
 console.log(
     (result.map(a=>a.split("_").map(b=>b.split("").join("")).join("\n")).join("\n   V\n"))
     .split("").map(
@@ -296,14 +359,5 @@ console.log(
             }
         }
     ).join("")+"\u001b[0m"
-    /*replace(/2/g,"\u001b[41m2").
-    replace(/3/g,"\u001b[42m2").
-    replace(/4/g,"\u001b[42m2").
-    replace(/5/g,"\u001b[44m2").
-    replace(/6/g,"\u001b[44m2").
-    replace(/7/g,"\u001b[43m7").
-    replace(/0/g,"\u001b[0m0").
-    replace(/_/g,"\u001b[0m_").
-    replace(/\n/g,"\u001b[0m\n")*/
-);
+);*/
 
